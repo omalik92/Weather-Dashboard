@@ -19,11 +19,19 @@ hr {
 
 #current-weather-heading {
   margin-left: 0.25rem;
+  margin-top: -1rem;
+  padding-top: -1rem;
+  display: inline-block;
+}
+
+#current-weather-icon {
+  display: inline-block;
 }
 
 .card {
   width: 11rem;
   height: 14rem;
+  margin-top: 1rem;
   background-color: #343a40 !important;
   color: antiquewhite;
 }
@@ -32,7 +40,14 @@ hr {
   padding: 0.5rem !important;
 }
 
-.conditions {
-  margin-bottom: 1rem;
+.conditions-main {
+  margin-bottom: 1.2rem;
   margin-left: 0.25rem;
+  margin-top: -1rem;
+}
+
+.conditions {
+  margin-bottom: 1.2rem;
+  margin-left: 0.25rem;
+  margin-top: -1rem;
 }

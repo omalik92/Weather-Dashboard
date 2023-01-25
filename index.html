@@ -109,12 +109,16 @@
 
         <div class="col-lg-9 pb-3">
           <section id="today" class="mt-3" role="region" aria-live="polite">
-            <h2 id="current-weather-heading" class="mt-1 h3">
-              London (14/12/23)
-            </h2>
-            <div class="conditions">Temp: <span id="temp"></span></div>
-            <div class="conditions">Wind:<span id="wind"></span></div>
-            <div class="conditions">Humidity: <span id="humidity"></span></div>
+            <h2 id="current-weather-heading" class="h3">London (14/12/23)</h2>
+            <img
+              id="current-weather-icon"
+              src="http://openweathermap.org/img/wn/10d@2x.png"
+            />
+            <div class="conditions-main">Temp: <span id="temp"></span></div>
+            <div class="conditions-main">Wind:<span id="wind"></span></div>
+            <div class="conditions-main">
+              Humidity: <span id="humidity"></span>
+            </div>
           </section>
           <section
             id="forecast"
@@ -127,7 +131,7 @@
               <div id="day-1" class="card mr-4">
                 <div class="card-body">
                   <h2 id="day-1-date" class="mt-1 h5">12/01/22</h2>
-                  <i></i>
+                  <img src="http://openweathermap.org/img/wn/10d@2x.png" />
                   <div class="conditions">
                     Temp: <span id="temp-day-1"></span>
                   </div>
@@ -141,21 +145,23 @@
               </div>
               <div id="day-2" class="card mr-4">
                 <div class="card-body">
+                  <h2 id="day-2-date" class="mt-1 h5">12/01/22</h2>
+                  <img src="http://openweathermap.org/img/wn/10d@2x.png" />
                   <div class="conditions">
-                    <h2 id="day-1-date" class="mt-1 h5">12/01/22</h2>
-                    Temp: <span id="temp-day-2"></span>
+                    Temp: <span id="temp-day-1"></span>
                   </div>
                   <div class="conditions">
-                    Wind:<span id="wind-day-2"></span>
+                    Wind:<span id="wind-day-1"></span>
                   </div>
                   <div class="conditions">
-                    Humidity: <span id="humidity-day-2"></span>
+                    Humidity: <span id="humidity-day-1"></span>
                   </div>
                 </div>
               </div>
               <div id="day-3" class="card mr-4">
                 <div class="card-body">
-                  <h2 id="day-1-date" class="mt-1 h5">12/01/22</h2>
+                  <h2 id="day-3-date" class="mt-1 h5">12/01/22</h2>
+                  <img src="http://openweathermap.org/img/wn/10d@2x.png" />
                   <div class="conditions">
                     Temp: <span id="temp-day-3"></span>
                   </div>
@@ -169,7 +175,8 @@
               </div>
               <div id="day-4" class="card mr-4">
                 <div class="card-body">
-                  <h2 id="day-1-date" class="mt-1 h5">12/01/22</h2>
+                  <h2 id="day-4-date" class="mt-1 h5">12/01/22</h2>
+                  <img src="http://openweathermap.org/img/wn/10d@2x.png" />
                   <div class="conditions">
                     Temp: <span id="temp-day-4"></span>
                   </div>
@@ -183,7 +190,8 @@
               </div>
               <div id="day-5" class="card mr-4">
                 <div class="card-body">
-                  <h2 id="day-1-date" class="mt-1 h5">12/01/22</h2>
+                  <h2 id="day-5-date" class="mt-1 h5">12/01/22</h2>
+                  <img src="http://openweathermap.org/img/wn/10d@2x.png" />
                   <div class="conditions">
                     Temp: <span id="temp-day-5"></span>
                   </div>
