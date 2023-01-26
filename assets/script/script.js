@@ -1,6 +1,7 @@
 var lat;
 var lon;
 var query;
+var cityName;
 //variables to store the temp, wind and humidity data retreived from openweather
 var day0 = { icon: [], temp: [], wind: [], humidity: [] };
 var day1 = { icon: [], temp: [], wind: [], humidity: [] };
@@ -8,6 +9,9 @@ var day2 = { icon: [], temp: [], wind: [], humidity: [] };
 var day3 = { icon: [], temp: [], wind: [], humidity: [] };
 var day4 = { icon: [], temp: [], wind: [], humidity: [] };
 var day5 = { icon: [], temp: [], wind: [], humidity: [] };
+
+var days = [day1, day2, day3, day4, day5];
+var allDays = [day0, day1, day2, day3, day4, day5];
 
 searchButton = $("#search-button");
 weatherCards = $("#weather-cards");
@@ -45,6 +49,20 @@ function get5Day() {
 }
 //function to sort data into days for the purposes of averaging the data
 function sort(response) {
+  var format = "hh:mm:ss";
+  // var time = moment() gives you current time. no format required.
+
+  var time = moment(),
+    beforeTime = moment("21:00:00", format),
+    afterTime = moment("00:00:00", format);
+
+  if (time.isBetween(beforeTime, afterTime)) {
+    day0.icon.push(response.list[0].weather[0].icon);
+    day0.temp.push(response.list[0].main.temp);
+    day0.wind.push(response.list[0].wind.speed * 2.237);
+    day0.humidity.push(response.list[0].main.humidity);
+  }
+
   for (i = 0; i < response.list.length; i++) {
     if (
       moment.unix(response.list[i].dt).format("DD/MM/YYYY") ==
@@ -52,39 +70,51 @@ function sort(response) {
     ) {
       day0.icon.push(response.list[i].weather[0].icon);
       day0.temp.push(response.list[i].main.temp);
-      day0.wind.push(response.list[i].wind.speed);
+      day0.wind.push(response.list[i].wind.speed * 2.237);
       day0.humidity.push(response.list[i].main.humidity);
     } else if (
       moment.unix(response.list[i].dt).format("DD/MM/YYYY") ==
       moment().add(1, "d").format("DD/MM/YYYY")
     ) {
-      day1.icon.push(response.list[i].weather[0].icon);
+      if (response.list[i].weather[0].icon.includes("d")) {
+        day1.icon.push(response.list[i].weather[0].icon);
+      }
+
       day1.temp.push(response.list[i].main.temp);
-      day1.wind.push(response.list[i].wind.speed);
+      day1.wind.push(response.list[i].wind.speed * 2.237);
       day1.humidity.push(response.list[i].main.humidity);
     } else if (
       moment.unix(response.list[i].dt).format("DD/MM/YYYY") ==
       moment().add(2, "d").format("DD/MM/YYYY")
     ) {
-      day2.icon.push(response.list[i].weather[0].icon);
+      if (response.list[i].weather[0].icon.includes("d")) {
+        day2.icon.push(response.list[i].weather[0].icon);
+      }
+
       day2.temp.push(response.list[i].main.temp);
-      day2.wind.push(response.list[i].wind.speed);
+      day2.wind.push(response.list[i].wind.speed * 2.237);
       day2.humidity.push(response.list[i].main.humidity);
     } else if (
       moment.unix(response.list[i].dt).format("DD/MM/YYYY") ==
       moment().add(3, "d").format("DD/MM/YYYY")
     ) {
-      day3.icon.push(response.list[i].weather[0].icon);
+      if (response.list[i].weather[0].icon.includes("d")) {
+        day3.icon.push(response.list[i].weather[0].icon);
+      }
+
       day3.temp.push(response.list[i].main.temp);
-      day3.wind.push(response.list[i].wind.speed);
+      day3.wind.push(response.list[i].wind.speed * 2.237);
       day3.humidity.push(response.list[i].main.humidity);
     } else if (
       moment.unix(response.list[i].dt).format("DD/MM/YYYY") ==
       moment().add(4, "d").format("DD/MM/YYYY")
     ) {
-      day4.icon.push(response.list[i].weather[0].icon);
+      if (response.list[i].weather[0].icon.includes("d")) {
+        day4.icon.push(response.list[i].weather[0].icon);
+      }
+
       day4.temp.push(response.list[i].main.temp);
-      day4.wind.push(response.list[i].wind.speed);
+      day4.wind.push(response.list[i].wind.speed * 2.237);
       day4.humidity.push(response.list[i].main.humidity);
     } else if (
       moment.unix(response.list[i].dt).format("DD/MM/YYYY") ==
@@ -92,14 +122,20 @@ function sort(response) {
     ) {
       day5.icon.push(response.list[i].weather[0].icon);
       day5.temp.push(response.list[i].main.temp);
-      day5.wind.push(response.list[i].wind.speed);
+      day5.wind.push(response.list[i].wind.speed * 2.237);
       day5.humidity.push(response.list[i].main.humidity);
     }
   }
 }
 
 function average(arr) {
-  arr.reduce((a, b) => a + b, 0) / arr.length;
+  var sum = 0;
+  for (var i = 0; i < arr.length; i++) {
+    sum += parseInt(arr[i], 10); //don't forget to add the base
+  }
+
+  var avg = sum / arr.length;
+  return avg;
 }
 
 function getMode(array) {
@@ -137,6 +173,96 @@ function getMode(array) {
   return highestValueKey;
 }
 
+function clearData() {
+  for (i = 0; i < allDays.length; i++) {
+    allDays[i].icon.splice(0, allDays[i].icon.length);
+    allDays[i].temp.splice(0, allDays[i].temp.length);
+    allDays[i].wind.splice(0, allDays[i].wind.length);
+    allDays[i].humidity.splice(0, allDays[i].humidity.length);
+  }
+}
+
+function updateHTML(response) {
+  //the following sets the weather info for today using Jquery DOM traversal
+  //setting todays date and location
+  //for loop to update all the required elements for weather
+  var cityName = response.city.name;
+  $("#today")
+    .children()
+    .eq(0)
+    .text(`${cityName} (${moment().format("DD/MM/YYYY")})`);
+  //setting the correct icon
+  $("#today")
+    .children()
+    .eq(1)
+    .attr(
+      "src",
+      "http://openweathermap.org/img/wn/" + getMode(day0.icon) + "@2x.png"
+    );
+  //settiing the average temp for today
+  $("#temp").text(`${average(day0.temp).toFixed(2)} °C`);
+  // setting average windspeed for today
+  $("#wind").text(` ${average(day0.wind).toFixed(2)} KPH`);
+  //setting average humidity for today
+  $("#humidity").text(` ${average(day0.humidity).toFixed(2)}%`);
+
+  // for loop to update all the required elements for weather cards
+  for (i = 0; i < days.length; i++) {
+    $("#weather-cards")
+      .children()
+      .eq(i)
+      .children()
+      .eq(0)
+      .children()
+      .eq(0)
+      .text(
+        moment()
+          .add(i + 1, "d")
+          .format("DD/MM/YYYY")
+      );
+    $("#weather-cards")
+      .children()
+      .eq(i)
+      .children()
+      .eq(0)
+      .children()
+      .eq(1)
+      .attr(
+        "src",
+        "http://openweathermap.org/img/wn/" + getMode(days[i].icon) + "@2x.png"
+      );
+    $("#weather-cards")
+      .children()
+      .eq(i)
+      .children()
+      .eq(0)
+      .children()
+      .eq(2)
+      .children()
+      .text(`${average(days[i].temp).toFixed(2)} °C`);
+
+    $("#weather-cards")
+      .children()
+      .eq(i)
+      .children()
+      .eq(0)
+      .children()
+      .eq(3)
+      .children()
+      .text(` ${average(days[i].wind).toFixed(2)} KPH`);
+
+    $("#weather-cards")
+      .children()
+      .eq(i)
+      .children()
+      .eq(0)
+      .children()
+      .eq(4)
+      .children()
+      .text(`${average(days[i].humidity).toFixed(2)}%`);
+  }
+}
+
 searchButton.on("click", function (event) {
   // This line allows us to take advantage of the HTML "submit" property
   // This way we can hit enter on the keyboard and it registers the search
@@ -172,13 +298,7 @@ searchButton.on("click", function (event) {
 
       sort(response);
 
-      //for loop to update all the required elements for weather
-      var cityName = response.city.name;
-
-      $("#today")
-        .children()
-        .eq(0)
-        .text(`${cityName} (${moment().format("DD/MM/YYYY")})`);
+      updateHTML(response);
 
       //
       console.log(getMode(day0.icon));
@@ -188,6 +308,8 @@ searchButton.on("click", function (event) {
       console.log(day3);
       console.log(day4);
       console.log(day5);
+
+      clearData();
     });
   });
 });
