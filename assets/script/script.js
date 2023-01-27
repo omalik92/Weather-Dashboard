@@ -19,7 +19,10 @@ weatherCards = $("#weather-cards");
 
 init();
 renderHistory();
-
+//tasks to complete:
+//clear or hide page if local storage is empty
+//setup up buttons with data attr for lat and lon
+//render results to page when clicked
 //create an init function
 function init() {
   searchHistory = JSON.parse(localStorage.getItem("searchHistory"));
@@ -38,6 +41,10 @@ function init() {
       sort(response);
 
       updateHTML(response);
+
+      $("section").removeClass("hidden");
+
+      clearData();
     });
   } else {
     searchHistory = [];
@@ -53,9 +60,32 @@ function renderHistory() {
         "btn btn-secondary w-100 mt-2 mb-1 search-button btn-block"
       );
       button.attr("id", "search-button");
+      button.data("lat", searchHistory[i].lat);
+      button.data("lon", searchHistory[i].lon);
       button.text(searchHistory[i].city);
       $("#history").append(button);
     }
+    //event lister for buttons mush be adde her so it is re-attached each time the buttons are rendered
+    $("#history")
+      .children("button")
+      .on("click", function (event2) {
+        selected = $(event2.target);
+        console.log(selected);
+        lat = selected.data("lat");
+        lon = selected.data("lon");
+        var fiveDayURL = get5Day();
+        $.ajax({
+          url: fiveDayURL,
+          method: "GET",
+        }).then(function (response) {
+          console.log(response);
+
+          sort(response);
+
+          updateHTML(response);
+          clearData();
+        });
+      });
   }
 }
 
@@ -355,6 +385,8 @@ searchButton.on("click", function (event) {
 
       updateHTML(response);
 
+      $("section").removeClass("hidden");
+
       //
       console.log(getMode(day0.icon));
       console.log(day0);
@@ -368,3 +400,24 @@ searchButton.on("click", function (event) {
     });
   });
 });
+
+// $("#history")
+//   .children("button")
+//   .on("click", function (event2) {
+//     selected = $(event2.target);
+//     console.log(selected);
+//     lat = selected.data("lat");
+//     lon = selected.data("lon");
+//     var fiveDayURL = get5Day();
+//     $.ajax({
+//       url: fiveDayURL,
+//       method: "GET",
+//     }).then(function (response) {
+//       console.log(response);
+
+//       sort(response);
+
+//       updateHTML(response);
+//       clearData();
+//     });
+//   });
