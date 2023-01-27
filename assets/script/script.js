@@ -94,7 +94,7 @@ function getCoord() {
   var APIKey = "9d4fe5adab147e88d86d852e4a84701e";
   query = $("#search-input").val().trim();
   var queryURL =
-    "http://api.openweathermap.org/geo/1.0/direct?q=" +
+    "https://api.openweathermap.org/geo/1.0/direct?q=" +
     query +
     "&limit=1&appid=" +
     APIKey;
@@ -107,7 +107,7 @@ function get5Day() {
   var APIKey = "9d4fe5adab147e88d86d852e4a84701e";
 
   var queryURL =
-    "http://api.openweathermap.org/data/2.5/forecast?lat=" +
+    "https://api.openweathermap.org/data/2.5/forecast?lat=" +
     lat +
     "&lon=" +
     lon +
