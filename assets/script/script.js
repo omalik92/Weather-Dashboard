@@ -268,7 +268,7 @@ function updateHTML(response) {
     .eq(1)
     .attr(
       "src",
-      "http://openweathermap.org/img/wn/" + getMode(day0.icon) + "@2x.png"
+      "https://openweathermap.org/img/wn/" + getMode(day0.icon) + "@2x.png"
     );
   //setting the max temp for today
   $("#temp").text(`${Math.max(...day0.temp).toFixed(2)} °C`);
@@ -300,7 +300,7 @@ function updateHTML(response) {
       .eq(1)
       .attr(
         "src",
-        "http://openweathermap.org/img/wn/" + getMode(days[i].icon) + "@2x.png"
+        "https://openweathermap.org/img/wn/" + getMode(days[i].icon) + "@2x.png"
       );
     $("#weather-cards")
       .children()
