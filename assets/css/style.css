@@ -51,3 +51,7 @@ hr {
   margin-left: 0.25rem;
   margin-top: -1rem;
 }
+
+.hidden {
+  visibility: hidden;
+}

@@ -2,6 +2,7 @@ var lat;
 var lon;
 var query;
 var cityName;
+var searchHistory = [];
 //variables to store the temp, wind and humidity data retreived from openweather
 var day0 = { icon: [], temp: [], wind: [], humidity: [] };
 var day1 = { icon: [], temp: [], wind: [], humidity: [] };
@@ -16,7 +17,47 @@ var allDays = [day0, day1, day2, day3, day4, day5];
 searchButton = $("#search-button");
 weatherCards = $("#weather-cards");
 
+init();
+renderHistory();
+
 //create an init function
+function init() {
+  searchHistory = JSON.parse(localStorage.getItem("searchHistory"));
+  if (searchHistory !== null) {
+    cityName = searchHistory[0].city;
+    lat = searchHistory[0].lat;
+    lon = searchHistory[0].lon;
+    $("#search-input").attr("placeholder", cityName);
+    var fiveDayURL = get5Day();
+    $.ajax({
+      url: fiveDayURL,
+      method: "GET",
+    }).then(function (response) {
+      console.log(response);
+
+      sort(response);
+
+      updateHTML(response);
+    });
+  } else {
+    searchHistory = [];
+  }
+}
+//function to render search history buttond
+function renderHistory() {
+  if (searchHistory.length !== 0) {
+    for (i = 0; i < searchHistory.length; i++) {
+      button = $("<button>");
+      button.attr(
+        "class",
+        "btn btn-secondary w-100 mt-2 mb-1 search-button btn-block"
+      );
+      button.attr("id", "search-button");
+      button.text(searchHistory[i].city);
+      $("#history").append(button);
+    }
+  }
+}
 
 function getCoord() {
   // Here we are building the URL we need to query the database
@@ -128,15 +169,15 @@ function sort(response) {
   }
 }
 
-function average(arr) {
-  var sum = 0;
-  for (var i = 0; i < arr.length; i++) {
-    sum += parseInt(arr[i], 10); //don't forget to add the base
-  }
+// function average(arr) {
+//   var sum = 0;
+//   for (var i = 0; i < arr.length; i++) {
+//     sum += parseInt(arr[i], 10); //don't forget to add the base
+//   }
 
-  var avg = sum / arr.length;
-  return avg;
-}
+//   var avg = sum / arr.length;
+//   return avg;
+// }
 
 function getMode(array) {
   // count amount of occurences of each number
@@ -199,12 +240,12 @@ function updateHTML(response) {
       "src",
       "http://openweathermap.org/img/wn/" + getMode(day0.icon) + "@2x.png"
     );
-  //settiing the average temp for today
-  $("#temp").text(`${average(day0.temp).toFixed(2)} °C`);
-  // setting average windspeed for today
-  $("#wind").text(` ${average(day0.wind).toFixed(2)} KPH`);
+  //setting the max temp for today
+  $("#temp").text(`${Math.max(...day0.temp).toFixed(2)} °C`);
+  // setting max windspeed for today
+  $("#wind").text(` ${Math.max(...day0.wind).toFixed(2)} kph`);
   //setting average humidity for today
-  $("#humidity").text(` ${average(day0.humidity).toFixed(2)}%`);
+  $("#humidity").text(` ${Math.max(...day0.humidity).toFixed(2)}%`);
 
   // for loop to update all the required elements for weather cards
   for (i = 0; i < days.length; i++) {
@@ -239,7 +280,7 @@ function updateHTML(response) {
       .children()
       .eq(2)
       .children()
-      .text(`${average(days[i].temp).toFixed(2)} °C`);
+      .text(`${Math.max(...days[i].temp).toFixed(2)} °C`);
 
     $("#weather-cards")
       .children()
@@ -249,7 +290,7 @@ function updateHTML(response) {
       .children()
       .eq(3)
       .children()
-      .text(` ${average(days[i].wind).toFixed(2)} KPH`);
+      .text(` ${Math.max(...days[i].wind).toFixed(2)} kph`);
 
     $("#weather-cards")
       .children()
@@ -259,7 +300,7 @@ function updateHTML(response) {
       .children()
       .eq(4)
       .children()
-      .text(`${average(days[i].humidity).toFixed(2)}%`);
+      .text(`${Math.max(...days[i].humidity).toFixed(2)}%`);
   }
 }
 
@@ -288,6 +329,20 @@ searchButton.on("click", function (event) {
 
     var fiveDayURL = get5Day();
 
+    search = { city: $("#search-input").val().trim(), lat: lat, lon, lon };
+    searchHistory.unshift(search);
+
+    if (searchHistory.length > 6) {
+      searchHistory.splice(4, 1);
+    }
+
+    $("#history").empty();
+
+    renderHistory();
+
+    console.log(searchHistory);
+
+    localStorage.setItem("searchHistory", JSON.stringify(searchHistory));
     // Make the AJAX request to the API - GETs the JSON data at the queryURL.
     // The data then gets passed as an argument to the updatePage function
     $.ajax({
