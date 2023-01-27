@@ -36,7 +36,7 @@ function init() {
       url: fiveDayURL,
       method: "GET",
     }).then(function (response) {
-      console.log(response);
+      // console.log(response);
 
       sort(response);
 
@@ -70,7 +70,7 @@ function renderHistory() {
       .children("button")
       .on("click", function (event2) {
         selected = $(event2.target);
-        console.log(selected);
+        // console.log(selected);
         lat = selected.data("lat");
         lon = selected.data("lon");
         var fiveDayURL = get5Day();
@@ -78,7 +78,7 @@ function renderHistory() {
           url: fiveDayURL,
           method: "GET",
         }).then(function (response) {
-          console.log(response);
+          // console.log(response);
 
           sort(response);
 
@@ -98,7 +98,7 @@ function getCoord() {
     query +
     "&limit=1&appid=" +
     APIKey;
-  console.log(queryURL);
+  // console.log(queryURL);
   return queryURL;
 }
 
@@ -115,7 +115,7 @@ function get5Day() {
     APIKey +
     "&units=metric";
 
-  console.log("5day " + queryURL);
+  // console.log("5day " + queryURL);
   return queryURL;
 }
 //function to sort data into days for the purposes of averaging the data
@@ -352,7 +352,7 @@ searchButton.on("click", function (event) {
     url: coordURL,
     method: "GET",
   }).then(function (response) {
-    console.log(response);
+    // console.log(response);
 
     lat = response[0].lat;
     lon = response[0].lon;
@@ -370,7 +370,7 @@ searchButton.on("click", function (event) {
 
     renderHistory();
 
-    console.log(searchHistory);
+    // console.log(searchHistory);
 
     localStorage.setItem("searchHistory", JSON.stringify(searchHistory));
     // Make the AJAX request to the API - GETs the JSON data at the queryURL.
@@ -379,7 +379,7 @@ searchButton.on("click", function (event) {
       url: fiveDayURL,
       method: "GET",
     }).then(function (response) {
-      console.log(response);
+      // console.log(response);
 
       sort(response);
 
@@ -388,36 +388,15 @@ searchButton.on("click", function (event) {
       $("section").removeClass("hidden");
 
       //
-      console.log(getMode(day0.icon));
-      console.log(day0);
-      console.log(day1);
-      console.log(day2);
-      console.log(day3);
-      console.log(day4);
-      console.log(day5);
+      // console.log(getMode(day0.icon));
+      // console.log(day0);
+      // console.log(day1);
+      // console.log(day2);
+      // console.log(day3);
+      // console.log(day4);
+      // console.log(day5);
 
       clearData();
     });
   });
 });
-
-// $("#history")
-//   .children("button")
-//   .on("click", function (event2) {
-//     selected = $(event2.target);
-//     console.log(selected);
-//     lat = selected.data("lat");
-//     lon = selected.data("lon");
-//     var fiveDayURL = get5Day();
-//     $.ajax({
-//       url: fiveDayURL,
-//       method: "GET",
-//     }).then(function (response) {
-//       console.log(response);
-
-//       sort(response);
-
-//       updateHTML(response);
-//       clearData();
-//     });
-//   });
