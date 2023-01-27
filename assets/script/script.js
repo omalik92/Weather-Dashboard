@@ -1,3 +1,4 @@
+//initialising variables in the global scope
 var lat;
 var lon;
 var query;
@@ -10,20 +11,18 @@ var day2 = { icon: [], temp: [], wind: [], humidity: [] };
 var day3 = { icon: [], temp: [], wind: [], humidity: [] };
 var day4 = { icon: [], temp: [], wind: [], humidity: [] };
 var day5 = { icon: [], temp: [], wind: [], humidity: [] };
-
+//array of 5 days not including today
 var days = [day1, day2, day3, day4, day5];
+//array of all days including today
 var allDays = [day0, day1, day2, day3, day4, day5];
-
+//Jquery element selectors to be used in the script
 searchButton = $("#search-button");
 weatherCards = $("#weather-cards");
-
+//calling the initialise function to load the starting page
 init();
+//calling the render history buttons function
 renderHistory();
-//tasks to complete:
-//clear or hide page if local storage is empty
-//setup up buttons with data attr for lat and lon
-//render results to page when clicked
-//create an init function
+//below function get the search history from local storage and loads the last search to the page
 function init() {
   searchHistory = JSON.parse(localStorage.getItem("searchHistory"));
   if (searchHistory !== null) {
@@ -41,16 +40,19 @@ function init() {
       sort(response);
 
       updateHTML(response);
-
+      //unhides the 5 day weather within sections
       $("section").removeClass("hidden");
 
       clearData();
     });
   } else {
+    //if nothing is avialble in local storage, as it may be the first run of the page
+    //set searchHistory to an empty string
     searchHistory = [];
   }
 }
-//function to render search history buttond
+//function to render search history buttons to page
+//note the event listener will not attach to buttons once re-rendered if it not called within the function as shown below
 function renderHistory() {
   if (searchHistory.length !== 0) {
     for (i = 0; i < searchHistory.length; i++) {
@@ -65,7 +67,7 @@ function renderHistory() {
       button.text(searchHistory[i].city);
       $("#history").append(button);
     }
-    //event lister for buttons mush be adde her so it is re-attached each time the buttons are rendered
+    //event lister for buttons mush be added here so it is re-attached each time the buttons are rendered
     $("#history")
       .children("button")
       .on("click", function (event2) {
@@ -88,10 +90,12 @@ function renderHistory() {
       });
   }
 }
+//function to get co-ordinates
 
 function getCoord() {
-  // Here we are building the URL we need to query the database
+  // Here we are building the URL we need to query open weather for co-ordinates of our city
   var APIKey = "9d4fe5adab147e88d86d852e4a84701e";
+  //gets value of search input
   query = $("#search-input").val().trim();
   var queryURL =
     "https://api.openweathermap.org/geo/1.0/direct?q=" +
@@ -101,9 +105,9 @@ function getCoord() {
   // console.log(queryURL);
   return queryURL;
 }
-
+// function to get 5 day URL
 function get5Day() {
-  // Here we are building the URL we need to query the database
+  // Here we are building the URL to query open weather for the 5 day
   var APIKey = "9d4fe5adab147e88d86d852e4a84701e";
 
   var queryURL =
@@ -118,11 +122,12 @@ function get5Day() {
   // console.log("5day " + queryURL);
   return queryURL;
 }
-//function to sort data into days for the purposes of averaging the data
+//function to sort data into days for the purposes of getting max values
 function sort(response) {
   var format = "hh:mm:ss";
   // var time = moment() gives you current time. no format required.
-
+  //if the time is between 9pm and 12AM use the first data element
+  //This prevents no data within the day0 object.
   var time = moment(),
     beforeTime = moment("21:00:00", format),
     afterTime = moment("00:00:00", format);
@@ -133,7 +138,7 @@ function sort(response) {
     day0.wind.push(response.list[0].wind.speed * 2.237);
     day0.humidity.push(response.list[0].main.humidity);
   }
-
+  //the below loop collects data into the corresponding day e.g. 23rd, 24th into day0 and day1 and so forth
   for (i = 0; i < response.list.length; i++) {
     if (
       moment.unix(response.list[i].dt).format("DD/MM/YYYY") ==
@@ -208,7 +213,7 @@ function sort(response) {
 //   var avg = sum / arr.length;
 //   return avg;
 // }
-
+//function to get the most occuring elemnt within an array
 function getMode(array) {
   // count amount of occurences of each number
 
@@ -240,10 +245,9 @@ function getMode(array) {
     }
   }
 
-  // convert key back to number
   return highestValueKey;
 }
-
+//function to clear data from arrays lines 8 to 13 to prevent data aggregating
 function clearData() {
   for (i = 0; i < allDays.length; i++) {
     allDays[i].icon.splice(0, allDays[i].icon.length);
@@ -252,7 +256,7 @@ function clearData() {
     allDays[i].humidity.splice(0, allDays[i].humidity.length);
   }
 }
-
+//function to write the required data to the HTML page
 function updateHTML(response) {
   //the following sets the weather info for today using Jquery DOM traversal
   //setting todays date and location
@@ -333,7 +337,7 @@ function updateHTML(response) {
       .text(`${Math.max(...days[i].humidity).toFixed(2)}%`);
   }
 }
-
+//event listener to caarry out function on search button
 searchButton.on("click", function (event) {
   // This line allows us to take advantage of the HTML "submit" property
   // This way we can hit enter on the keyboard and it registers the search
@@ -346,28 +350,34 @@ searchButton.on("click", function (event) {
   // Build the query URL for the ajax request to the `Geocoder API
   var coordURL = getCoord();
 
-  // Make the AJAX request to the API - GETs the JSON data at the queryURL.
-  // The data then gets passed as an argument to the updatePage function
+  // Make the AJAX request to the API - GETs the JSON data at the coordURL.
+  //note Asyns true by default code execution within function does not wait for response!!
   $.ajax({
     url: coordURL,
     method: "GET",
   }).then(function (response) {
     // console.log(response);
-
+    //lat and lon from response set to lat lon variabales
     lat = response[0].lat;
     lon = response[0].lon;
 
+    //five day URL function call return url set to fiveDay URL
+
     var fiveDayURL = get5Day();
+
+    //data of search requested by the user saved to search var
 
     search = { city: $("#search-input").val().trim(), lat: lat, lon, lon };
     searchHistory.unshift(search);
 
+    //this ensures only a max of 5 search histories aee saved to local storage
+
     if (searchHistory.length > 6) {
       searchHistory.splice(4, 1);
     }
-
+    //previously rendered buttons removed to stop them aggregating each time the user searches
     $("#history").empty();
-
+    //history rendered re-rendered here after a search as well as on page load
     renderHistory();
 
     // console.log(searchHistory);
@@ -375,6 +385,8 @@ searchButton.on("click", function (event) {
     localStorage.setItem("searchHistory", JSON.stringify(searchHistory));
     // Make the AJAX request to the API - GETs the JSON data at the queryURL.
     // The data then gets passed as an argument to the updatePage function
+    //Note: second Ajax call nested as it relies on getting the co-ordinates before
+    //the 5 day weather can be queried
     $.ajax({
       url: fiveDayURL,
       method: "GET",
