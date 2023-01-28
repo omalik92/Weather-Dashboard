@@ -368,6 +368,8 @@ searchButton.on("click", function (event) {
     //data of search requested by the user saved to search var
 
     search = { city: $("#search-input").val().trim(), lat: lat, lon, lon };
+    //clears
+    $("#search-input").val("");
     searchHistory.unshift(search);
 
     //this ensures only a max of 5 search histories aee saved to local storage
